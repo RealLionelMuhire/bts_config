@@ -1,0 +1,70 @@
+spring:
+  application:
+    name: bus-ticketing-live-tracking-service
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+  cloud:
+    config:
+      enabled: false
+
+server:
+  port: 8087
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+  instance:
+    prefer-ip-address: true
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans
+
+logging:
+  level:
+    com.cavgo.busticketing: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing_dev}
+#   jpa:
+#     hibernate:
+#       ddl-auto: create-drop
+#     show-sql: true
+#     properties:
+#       hibernate:
+#         format_sql: true
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing-dev}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing-dev/protocol/openid-connect/certs}
+
+# # Live Tracking Test Settings
+# tracking:
+#   update-interval: 5s
+#   geofence-radius: 50m
+#   max-speed: 60km/h
+#   test-mode: true
+#   mock-data:
+#     enabled: true
+#     interval: 10s
+
+# logging:
+#   level:
+#     root: DEBUG
+#     org.springframework: DEBUG
+#     com.bus.ticketing: DEBUG
+#     org.hibernate: DEBUG
+#     org.hibernate.SQL: DEBUG
+#     org.hibernate.type.descriptor.sql: DEBUG 

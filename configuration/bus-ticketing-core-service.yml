@@ -1,0 +1,180 @@
+spring:
+  application:
+    name: bus-ticketing-core-service
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_SERVER_URL}/realms/${KEYCLOAK_REALM}
+          jwk-set-uri: ${KEYCLOAK_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,prometheus
+    endpoint:
+      health:
+        show-details: always
+    health:
+      circuitbreakers:
+        enabled: true
+      ratelimiters:
+        enabled: true
+  cloud:
+    config:
+      enabled: true
+      uri: http://bus-ticketing-config-server:8090
+    discovery:
+      enabled: true
+
+server:
+  port: 8092
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bus-ticketing-service-registry:8081/eureka/
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  
+  ratelimiter:
+    instances:
+      tripCreationLimiter:
+        limitForPeriod: 20
+        limitRefreshPeriod: 1s
+        timeoutDuration: 500ms
+      routeUpdateLimiter:
+        limitForPeriod: 50
+        limitRefreshPeriod: 1s
+        timeoutDuration: 500ms
+      busManagementLimiter:
+        limitForPeriod: 30
+        limitRefreshPeriod: 1s
+        timeoutDuration: 500ms
+
+logging:
+  level:
+    com.bus.ticketing.core: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+info:
+  app:
+    name: ${spring.application.name}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans    
+
+# spring:
+#   application:
+#     name: bus-ticketing-core-service
+#   datasource:
+#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
+#     username: ${DB_USERNAME:postgres}
+#     password: ${DB_PASSWORD:postgres}
+#     driver-class-name: org.postgresql.Driver
+#   jpa:
+#     hibernate:
+#       ddl-auto: update
+#     show-sql: true
+#     properties:
+#       hibernate:
+#         dialect: org.hibernate.dialect.PostgreSQLDialect
+#         format_sql: true
+#   flyway:
+#     enabled: true
+#     baseline-on-migrate: true
+#     locations: classpath:db/migration
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs}
+
+# server:
+#   port: 8092
+
+# eureka:
+#   client:
+#     service-url:
+#       defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8081}/eureka
+#   instance:
+#     prefer-ip-address: true
+
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: "*"
+#   endpoint:
+#     health:
+#       show-details: always
+
+# info:
+#   app:
+#     name: ${spring.application.name}
+
+# logging:
+#   level:
+#     root: INFO
+#     org.springframework: INFO
+#     com.bus.ticketing: DEBUG
+#     org.hibernate: INFO 

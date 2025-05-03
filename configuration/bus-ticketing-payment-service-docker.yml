@@ -1,0 +1,144 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: bus-ticketing-payment-service
+  datasource:
+    url: ${PAYMENT_POSTGRES_URL}
+    username: ${PAYMENT_POSTGRES_USER}
+    password: ${PAYMENT_POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${app.config.keycloak.server-url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
+  cloud:
+    config:
+      enabled: false
+
+# Actuator settings
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+    git:
+      mode: full
+
+# Eureka settings
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 192.168.8.105
+
+# Logging
+logging:
+  level:
+    com.busticketing: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.data: INFO
+
+# Feign Client settings
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: FULL
+  circuitbreaker:
+    enabled: true
+
+# Resilience4j settings
+resilience4j:
+  circuitbreaker:
+    instances:
+      coreFeignClientCB:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+  retry:
+    instances:
+      coreFeignClientRetry:
+        maxRetryAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+
+# App config (matching user service)
+app:
+  config:
+    keycloak:
+      server-url: ${KEYCLOAK_SERVER_URL}
+      realm: ${KEYCLOAK_REALM}
+      clientId: ${KEYCLOAK_CLIENT_ID}
+      client-secret: ${KEYCLOAK_CLIENT_SECRET}
+
+# App info
+info:
+  app:
+    name: ${spring.application.name}
+    description: Payment Service for Bus Ticketing System
+    version: 1.0.0
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans
+
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
+#   eureka:
+#     client:
+#       service-url:
+#         defaultZone: http://${EUREKA_HOST:bus-ticketing-service-registry}:${EUREKA_PORT:8081}/eureka
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://keycloak_web:8080/realms/bus-ticketing}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://keycloak_web:8080/realms/bus-ticketing/protocol/openid-connect/certs}
+
+# # Payment Gateway Production Credentials
+# payment:
+#   gateway:
+#     test-mode: false
+#     api-key: ${PAYMENT_GATEWAY_API_KEY}
+#     secret-key: ${PAYMENT_GATEWAY_SECRET_KEY}
+
+# logging:
+#   level:
+#     root: INFO
+#     org.springframework: INFO
+#     com.bus.ticketing: INFO
+#     org.hibernate: WARN 

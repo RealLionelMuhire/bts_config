@@ -1,0 +1,222 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+
+spring:
+  application:
+    name: bus-ticketing-notification-service
+
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
+      auto-index-creation: true
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  # Email Configuration (replace with actual credentials)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        from:
+          name: Bus Ticketing System
+
+  # RabbitMQ Configuration
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # Actuator Configuration
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: '*'
+    endpoint:
+      health:
+        show-details: always
+    health:
+      circuitbreakers:
+        enabled: true
+      ratelimiters:
+        enabled: true
+
+  # Cloud Configuration
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: true
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka/
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
+# Twilio Configuration
+twilio:
+  account:
+    sid: ${TWILIO_ACCOUNT_SID}
+    auth-token: ${TWILIO_AUTH_TOKEN}
+  phone:
+    number: ${TWILIO_PHONE_NUMBER}
+  whatsapp:
+    number: ${TWILIO_WHATSAPP_NUMBER}
+
+# Notification Configuration
+notification:
+  sms:
+    enabled: ${ENABLE_SMS_NOTIFICATIONS:false}
+  whatsapp:
+    enabled: ${ENABLE_WHATSAPP_NOTIFICATIONS:false}
+  kafka:
+    topic: notifications
+
+# Resilience4j Configuration
+resilience4j:
+  ratelimiter:
+    instances:
+      notificationLimiter:
+        limit-for-period: 20
+        limit-refresh-period: 1s
+        timeout-duration: 500ms
+  circuitbreaker:
+    instances:
+      notificationService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    com.bus.ticketing.notification: INFO
+    org.springframework.data.mongodb: INFO
+    org.springframework.kafka: INFO
+    org.springframework.mail: INFO
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans
+
+# spring:
+#   application:
+#     name: bus-ticketing-notification-service
+#   datasource:
+#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
+#     username: ${DB_USERNAME:postgres}
+#     password: ${DB_PASSWORD:postgres}
+#     driver-class-name: org.postgresql.Driver
+#   jpa:
+#     hibernate:
+#       ddl-auto: update
+#     show-sql: true
+#     properties:
+#       hibernate:
+#         dialect: org.hibernate.dialect.PostgreSQLDialect
+#         format_sql: true
+#   flyway:
+#     enabled: true
+#     baseline-on-migrate: true
+#     locations: classpath:db/migration
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs}
+#   mail:
+#     host: ${SMTP_HOST:smtp.gmail.com}
+#     port: ${SMTP_PORT:587}
+#     username: ${SMTP_USERNAME}
+#     password: ${SMTP_PASSWORD}
+#     properties:
+#       mail:
+#         smtp:
+#           auth: true
+#           starttls:
+#             enable: true
+
+# server:
+#   port: 8088
+
+# eureka:
+#   client:
+#     service-url:
+#       defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8081}/eureka
+#   instance:
+#     prefer-ip-address: true
+
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: "*"
+#   endpoint:
+#     health:
+#       show-details: always
+
+# info:
+#   app:
+#     name: ${spring.application.name}
+
+# # Notification Settings
+# notification:
+#   email:
+#     from: ${NOTIFICATION_EMAIL_FROM}
+#     reply-to: ${NOTIFICATION_EMAIL_REPLY_TO}
+#   sms:
+#     provider: ${SMS_PROVIDER}
+#     api-key: ${SMS_API_KEY}
+#     api-secret: ${SMS_API_SECRET}
+#   push:
+#     enabled: true
+#     fcm:
+#       server-key: ${FCM_SERVER_KEY}
+#       sender-id: ${FCM_SENDER_ID}
+
+# logging:
+#   level:
+#     root: INFO
+#     org.springframework: INFO
+#     com.bus.ticketing: DEBUG
+#     org.hibernate: INFO 

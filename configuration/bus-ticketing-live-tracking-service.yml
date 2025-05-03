@@ -1,0 +1,97 @@
+spring:
+  application:
+    name: bus-ticketing-live-tracking-service
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+  cloud:
+    config:
+      enabled: false
+
+server:
+  port: 8087
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+  instance:
+    prefer-ip-address: true
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans
+
+logging:
+  level:
+    com.cavgo.busticketing: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# spring:
+#   application:
+#     name: bus-ticketing-live-tracking-service
+#   datasource:
+#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
+#     username: ${DB_USERNAME:postgres}
+#     password: ${DB_PASSWORD:postgres}
+#     driver-class-name: org.postgresql.Driver
+#   jpa:
+#     hibernate:
+#       ddl-auto: update
+#     show-sql: true
+#     properties:
+#       hibernate:
+#         dialect: org.hibernate.dialect.PostgreSQLDialect
+#         format_sql: true
+#   flyway:
+#     enabled: true
+#     baseline-on-migrate: true
+#     locations: classpath:db/migration
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs}
+
+# server:
+#   port: 8087
+
+# eureka:
+#   client:
+#     service-url:
+#       defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8081}/eureka
+#   instance:
+#     prefer-ip-address: true
+
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: "*"
+#   endpoint:
+#     health:
+#       show-details: always
+
+# info:
+#   app:
+#     name: ${spring.application.name}
+
+# # Live Tracking Settings
+# tracking:
+#   update-interval: 30s
+#   geofence-radius: 100m
+#   max-speed: 120km/h
+
+# logging:
+#   level:
+#     root: INFO
+#     org.springframework: INFO
+#     com.bus.ticketing: DEBUG
+#     org.hibernate: INFO 

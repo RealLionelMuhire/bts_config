@@ -1,0 +1,37 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: mongodb://admin:password@localhost:27017/bus_analytics_dev
+
+  # Elasticsearch Configuration
+  elasticsearch:
+    uris: localhost:9200
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  # Cloud Configuration
+  cloud:
+    config:
+      enabled: false
+      uri: http://localhost:8090
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka/
+
+# Logging Configuration
+logging:
+  level:
+    com.bus.ticketing.analytics: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    org.springframework.data.elasticsearch: DEBUG
+    org.springframework.kafka: DEBUG 

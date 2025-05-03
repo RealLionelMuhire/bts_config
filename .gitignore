@@ -1,0 +1,23 @@
+# Environment files
+.env
+*.env
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Sensitive configuration files
+*-secrets.yml
+*-credentials.yml 

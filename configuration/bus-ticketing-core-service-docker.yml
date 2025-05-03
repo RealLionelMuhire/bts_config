@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: bus-ticketing-core-service
+  datasource:
+    url: jdbc:h2:mem:bus_ticketing_core_service
+    username: root
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: false
+server:
+  port: 8092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true;
+    hostname: localhost
+
+info:
+  app:
+    name: ${spring.application.name}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans    
+
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
+#   eureka:
+#     client:
+#       service-url:
+#         defaultZone: http://${EUREKA_HOST:bus-ticketing-service-registry}:${EUREKA_PORT:8081}/eureka
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://keycloak_web:8080/realms/bus-ticketing}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://keycloak_web:8080/realms/bus-ticketing/protocol/openid-connect/certs}
+
+# # Core Service Production Settings
+# core:
+#   service:
+#     test-data:
+#       enabled: false
+
+# logging:
+#   level:
+#     root: INFO
+#     org.springframework: INFO
+#     com.bus.ticketing: INFO
+#     org.hibernate: WARN 

@@ -1,0 +1,115 @@
+server:
+  port: 8095
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+
+spring:
+  application:
+    name: bus-ticketing-analytics-service
+  
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
+      auto-index-creation: true
+  
+  # Elasticsearch Configuration
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URL}
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
+  
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: analytics-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  
+  # Actuator Configuration
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: '*'
+    endpoint:
+      health:
+        show-details: always
+    health:
+      circuitbreakers:
+        enabled: true
+      ratelimiters:
+        enabled: true
+  
+  # Cloud Configuration
+  cloud:
+    config:
+      enabled: true
+      uri: http://bus-ticketing-config-server:8090
+    discovery:
+      enabled: true
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bus-ticketing-service-registry:8081/eureka/
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
+# Resilience4j Configuration
+resilience4j:
+  ratelimiter:
+    instances:
+      analyticsLimiter:
+        limit-for-period: 10
+        limit-refresh-period: 1s
+        timeout-duration: 1000ms
+  circuitbreaker:
+    instances:
+      coreService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+      paymentService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    com.bus.ticketing.analytics: INFO
+    org.springframework.data.mongodb: INFO
+    org.springframework.data.elasticsearch: INFO
+    org.springframework.kafka: INFO
+
+# Analytics Configuration
+analytics:
+  report:
+    retention-days: 90
+  dashboard:
+    max-widgets: 20
+  data:
+    prefetch-enabled: true
+    prefetch-cron: "0 0 1 * * ?" # Every day at 1:00 AM 

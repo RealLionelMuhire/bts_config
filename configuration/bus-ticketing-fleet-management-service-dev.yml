@@ -1,0 +1,84 @@
+spring:
+  application:
+    name: bus-ticketing-fleet-management-service
+  datasource:
+    url: ${FLEET_POSTGRES_URL}
+    username: ${FLEET_POSTGRES_USER}
+    password: ${FLEET_POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  cloud:
+    config:
+      enabled: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+server:
+  port: 8086
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    com.bus.ticketing.fleet: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# spring:
+#   datasource:
+#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing_dev}
+#   jpa:
+#     hibernate:
+#       ddl-auto: create-drop
+#     show-sql: true
+#     properties:
+#       hibernate:
+#         format_sql: true
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing-dev}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing-dev/protocol/openid-connect/certs}
+
+# # Fleet Management Test Data
+# fleet:
+#   management:
+#     test-data:
+#       enabled: true
+#       location: classpath:test-data/
+#     maintenance:
+#       schedule:
+#         interval: 24h
+#         test-mode: true
+
+# logging:
+#   level:
+#     root: DEBUG
+#     org.springframework: DEBUG
+#     com.bus.ticketing: DEBUG
+#     org.hibernate: DEBUG
+#     org.hibernate.SQL: DEBUG
+#     org.hibernate.type.descriptor.sql: DEBUG 

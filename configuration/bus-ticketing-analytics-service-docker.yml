@@ -1,0 +1,31 @@
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
+
+  # Elasticsearch Configuration
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URL}
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: kafka:9092
+
+  # Cloud Configuration
+  cloud:
+    config:
+      enabled: true
+      uri: http://bus-ticketing-config-server:8090
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bus-ticketing-service-registry:8081/eureka/ 
