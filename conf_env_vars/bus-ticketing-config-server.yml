@@ -1,0 +1,33 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: bus-ticketing-config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///config-repo
+          default-label: main
+          search-paths: '{application}'
+          clone-on-start: true
+          force-pull: true
+    discovery:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bus-ticketing-service-registry:8081/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always 

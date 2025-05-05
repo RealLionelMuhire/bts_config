@@ -13,12 +13,12 @@ spring:
   # MongoDB Configuration
   data:
     mongodb:
-      uri: mongodb://mongo:QBvdtcZvPHZgLenozuMzDgJawtOiEcns@yamanote.proxy.rlwy.net:51700/bus_analytics
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
       auto-index-creation: true
 
   # Kafka Configuration
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: notification-service
       auto-offset-reset: earliest
@@ -47,10 +47,10 @@ spring:
 
   # RabbitMQ Configuration
   rabbitmq:
-    host: ${RABBITMQ_HOST}
-    port: ${RABBITMQ_PORT}
-    username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
   # Actuator Configuration
   management:
@@ -84,7 +84,7 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
 
-# Twilio Configuration
+# Twilio Configuration (replace with actual credentials)
 twilio:
   account:
     sid: ${TWILIO_ACCOUNT_SID}
@@ -140,19 +140,22 @@ management:
 
 # spring:
 #   datasource:
-#     url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME:bus_ticketing_prod}
+#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing_dev}
 #   jpa:
 #     hibernate:
-#       ddl-auto: validate
-#     show-sql: false
+#       ddl-auto: create-drop
+#     show-sql: true
+#     properties:
+#       hibernate:
+#         format_sql: true
 #   security:
 #     oauth2:
 #       resourceserver:
 #         jwt:
-#           issuer-uri: ${KEYCLOAK_ISSUER_URI}
-#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI}
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing-dev}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing-dev/protocol/openid-connect/certs}
 #   mail:
-#     host: ${SMTP_HOST}
+#     host: ${SMTP_HOST:smtp.gmail.com}
 #     port: ${SMTP_PORT:587}
 #     username: ${SMTP_USERNAME}
 #     password: ${SMTP_PASSWORD}
@@ -163,27 +166,29 @@ management:
 #           starttls:
 #             enable: true
 
-# # Production Notification Settings
+# # Notification Test Settings
 # notification:
 #   email:
-#     from: ${NOTIFICATION_EMAIL_FROM}
-#     reply-to: ${NOTIFICATION_EMAIL_REPLY_TO}
-#     test-mode: false
+#     from: ${NOTIFICATION_EMAIL_FROM:test@example.com}
+#     reply-to: ${NOTIFICATION_EMAIL_REPLY_TO:test@example.com}
+#     test-mode: true
 #   sms:
-#     provider: ${SMS_PROVIDER}
-#     api-key: ${SMS_API_KEY}
-#     api-secret: ${SMS_API_SECRET}
-#     test-mode: false
+#     provider: ${SMS_PROVIDER:test}
+#     api-key: ${SMS_API_KEY:test-key}
+#     api-secret: ${SMS_API_SECRET:test-secret}
+#     test-mode: true
 #   push:
 #     enabled: true
 #     fcm:
-#       server-key: ${FCM_SERVER_KEY}
-#       sender-id: ${FCM_SENDER_ID}
-#     test-mode: false
+#       server-key: ${FCM_SERVER_KEY:test-key}
+#       sender-id: ${FCM_SENDER_ID:test-id}
+#     test-mode: true
 
 # logging:
 #   level:
-#     root: INFO
-#     org.springframework: INFO
-#     com.bus.ticketing: INFO
-#     org.hibernate: WARN 
+#     root: DEBUG
+#     org.springframework: DEBUG
+#     com.bus.ticketing: DEBUG
+#     org.hibernate: DEBUG
+#     org.hibernate.SQL: DEBUG
+#     org.hibernate.type.descriptor.sql: DEBUG 

@@ -1,0 +1,42 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bus_ticketing_pos_dev
+    username: postgres
+    password: postgres
+
+  # JPA Configuration
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  # Security Configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/bus-ticketing
+          jwk-set-uri: http://localhost:8090/realms/bus-ticketing/protocol/openid-connect/certs
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# Logging Configuration
+logging:
+  level:
+    com.bus.ticketing.pos: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG 

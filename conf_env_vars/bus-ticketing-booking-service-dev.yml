@@ -5,9 +5,9 @@ spring:
   application:
     name: bus-ticketing-booking-service
   datasource:
-    url: postgresql://postgres:gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB@switchback.proxy.rlwy.net:37854/railway
+    url: jdbc:postgresql://localhost:5432/bus_ticketing
     username: postgres
-    password: gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -89,78 +89,30 @@ management:
     health:
       show-details: always
 
-##ACTUATOR ENDPOINT CONFIGURATIONS
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    prometheus:
-      enabled: true
-  info:
-    env:
-      enabled: true
-
-logging:
-  file:
-    name: '/var/log/bus-ticketing-booking-service/application.log'
-
 
 
 # spring:
-#   application:
-#     name: bus-ticketing-booking-service
 #   datasource:
-#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
-#     username: ${DB_USERNAME:postgres}
-#     password: ${DB_PASSWORD:postgres}
-#     driver-class-name: org.postgresql.Driver
+#     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing_dev}
 #   jpa:
 #     hibernate:
-#       ddl-auto: update
+#       ddl-auto: create-drop
 #     show-sql: true
 #     properties:
 #       hibernate:
-#         dialect: org.hibernate.dialect.PostgreSQLDialect
 #         format_sql: true
-#   flyway:
-#     enabled: true
-#     baseline-on-migrate: true
-#     locations: classpath:db/migration
 #   security:
 #     oauth2:
 #       resourceserver:
 #         jwt:
-#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing}
-#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs}
-
-# server:
-#   port: 8084
-
-# eureka:
-#   client:
-#     service-url:
-#       defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8081}/eureka
-#   instance:
-#     prefer-ip-address: true
-
-# management:
-#   endpoints:
-#     web:
-#       exposure:
-#         include: "*"
-#   endpoint:
-#     health:
-#       show-details: always
-
-# info:
-#   app:
-#     name: ${spring.application.name}
+#           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bus-ticketing-dev}
+#           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing-dev/protocol/openid-connect/certs}
 
 # logging:
 #   level:
-#     root: INFO
-#     org.springframework: INFO
+#     root: DEBUG
+#     org.springframework: DEBUG
 #     com.bus.ticketing: DEBUG
-#     org.hibernate: INFO 
+#     org.hibernate: DEBUG
+#     org.hibernate.SQL: DEBUG
+#     org.hibernate.type.descriptor.sql: DEBUG 

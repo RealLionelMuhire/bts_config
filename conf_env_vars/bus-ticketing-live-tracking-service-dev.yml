@@ -2,9 +2,9 @@ spring:
   application:
     name: bus-ticketing-live-tracking-service
   redis:
-    host: ballast.proxy.rlwy.net
-    port: 54645
-    password: rFWMafDIhJruZQQTfXngBLrSYhQOkSuT
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
   cloud:
     config:
       enabled: false

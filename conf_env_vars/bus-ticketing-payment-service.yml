@@ -1,13 +1,13 @@
 server:
-  port: 8084
+  port: 8085
 
 spring:
   application:
-    name: bus-ticketing-booking-service
+    name: bus-ticketing-payment-service
   datasource:
-    url: postgresql://postgres:gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB@switchback.proxy.rlwy.net:37854/railway
-    username: postgres
-    password: gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB
+    url: ${PAYMENT_POSTGRES_URL}
+    username: ${PAYMENT_POSTGRES_USER}
+    password: ${PAYMENT_POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -25,6 +25,24 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: ${app.config.keycloak.server-url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
+  cloud:
+    config:
+      enabled: false
+
+# Actuator settings
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+    git:
+      mode: full
 
 # Eureka settings
 eureka:
@@ -33,13 +51,15 @@ eureka:
       defaultZone: http://localhost:8081/eureka
   instance:
     prefer-ip-address: true
+    ip-address: 192.168.8.105
 
 # Logging
 logging:
   level:
-    com.bus.ticketing: DEBUG
+    com.busticketing: DEBUG
     org.springframework.web: INFO
     org.springframework.security: DEBUG
+    org.springframework.data: INFO
 
 # Feign Client settings
 feign:
@@ -71,46 +91,33 @@ resilience4j:
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
 
-# App config
+# App config (matching user service)
 app:
   config:
     keycloak:
-      server-url: http://localhost:8080
-      realm: bus-ticketing
-      clientId: bus-ticketing-client
+      server-url: ${KEYCLOAK_SERVER_URL}
+      realm: ${KEYCLOAK_REALM}
+      clientId: ${KEYCLOAK_CLIENT_ID}
+      client-secret: ${KEYCLOAK_CLIENT_SECRET}
 
-# Actuator settings
+# App info
+info:
+  app:
+    name: ${spring.application.name}
+    description: Payment Service for Bus Ticketing System
+    version: 1.0.0
+
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-
-##ACTUATOR ENDPOINT CONFIGURATIONS
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    prometheus:
-      enabled: true
-  info:
-    env:
-      enabled: true
-
-logging:
-  file:
-    name: '/var/log/bus-ticketing-booking-service/application.log'
-
-
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.0.12:9411/api/v2/spans
 
 # spring:
 #   application:
-#     name: bus-ticketing-booking-service
+#     name: bus-ticketing-payment-service
 #   datasource:
 #     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
 #     username: ${DB_USERNAME:postgres}
@@ -136,7 +143,7 @@ logging:
 #           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs}
 
 # server:
-#   port: 8084
+#   port: 8085
 
 # eureka:
 #   client:

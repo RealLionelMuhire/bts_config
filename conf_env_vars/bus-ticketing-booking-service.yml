@@ -5,9 +5,9 @@ spring:
   application:
     name: bus-ticketing-booking-service
   datasource:
-    url: postgresql://postgres:gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB@switchback.proxy.rlwy.net:37854/railway
-    username: postgres
-    password: gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

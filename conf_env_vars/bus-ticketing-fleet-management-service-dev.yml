@@ -2,9 +2,9 @@ spring:
   application:
     name: bus-ticketing-fleet-management-service
   datasource:
-    url: postgresql://postgres:gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB@switchback.proxy.rlwy.net:37854/railway
-    username: postgres
-    password: gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB
+    url: ${FLEET_POSTGRES_URL}
+    username: ${FLEET_POSTGRES_USER}
+    password: ${FLEET_POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

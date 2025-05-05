@@ -6,14 +6,13 @@ spring:
   # MongoDB Configuration
   data:
     mongodb:
-      uri: mongodb://mongo:QBvdtcZvPHZgLenozuMzDgJawtOiEcns@yamanote.proxy.rlwy.net:51700/bus_analytics
-      auto-index-creation: true
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
 
   # Elasticsearch Configuration
   elasticsearch:
-    uris: http://elasticsearch:9200
-    username: elastic
-    password: 2z4Q5Y8p9v
+    uris: ${ELASTICSEARCH_URL}
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
 
   # Kafka Configuration
   kafka:

@@ -1,0 +1,31 @@
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  # Database Configuration
+  datasource:
+    url: ${POS_POSTGRES_URL}
+    username: ${POS_POSTGRES_USER}
+    password: ${POS_POSTGRES_PASSWORD}
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: kafka:9092
+
+  # Security Configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_SERVER_URL}/realms/${KEYCLOAK_REALM}
+          jwk-set-uri: ${KEYCLOAK_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bus-ticketing-service-registry:8081/eureka/
+  instance:
+    prefer-ip-address: true
+    hostname: bus-ticketing-pos-service 

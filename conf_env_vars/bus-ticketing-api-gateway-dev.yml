@@ -4,7 +4,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bus-ticketing
+          issuer-uri: http://localhost:8080/realms/bus-ticketing-dev
           jwk-set-uri: http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs
   
   ## GATEWAY CONFIGURATIONS
@@ -107,8 +107,8 @@ spring:
 app:
   config:
     keycloak:
-      url: http://localhost:8080
-      realm: bus-ticketing
+      url: http://192.168.1.5:8080
+      realm: javatodev-internet-banking
 
 management:
   tracing:
@@ -116,7 +116,7 @@ management:
       probability: 1.0
   zipkin:
     tracing:
-      endpoint: http://172.25.0.12:9411/api/v2/spans    
+      endpoint: http://192.168.1.5:9411/api/v2/spans    
 
 server:
   port: 8082
@@ -124,7 +124,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://bus-ticketing-service-registry:8081/eureka
+      defaultZone: http://192.168.1.5:8081/eureka
     fetch-registry: true
     register-with-eureka: true
   instance:

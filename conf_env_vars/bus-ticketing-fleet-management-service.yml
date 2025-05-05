@@ -1,23 +1,29 @@
 spring:
   application:
-    name: bus-ticketing-live-tracking-service
-  redis:
-    host: ballast.proxy.rlwy.net
-    port: 54645
-    password: rFWMafDIhJruZQQTfXngBLrSYhQOkSuT
+    name: bus-ticketing-fleet-management-service
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
   cloud:
     config:
       enabled: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
 
 server:
-  port: 8087
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8081/eureka
-  instance:
-    prefer-ip-address: true
+  port: 8086
 
 management:
   tracing:
@@ -27,15 +33,22 @@ management:
     tracing:
       endpoint: http://172.25.0.12:9411/api/v2/spans
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+  instance:
+    prefer-ip-address: true
+
 logging:
   level:
-    com.cavgo.busticketing: INFO
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    com.bus.ticketing.fleet: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 # spring:
 #   application:
-#     name: bus-ticketing-live-tracking-service
+#     name: bus-ticketing-fleet-management-service
 #   datasource:
 #     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bus_ticketing}
 #     username: ${DB_USERNAME:postgres}
@@ -61,7 +74,7 @@ logging:
 #           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs}
 
 # server:
-#   port: 8087
+#   port: 8086
 
 # eureka:
 #   client:
@@ -82,12 +95,6 @@ logging:
 # info:
 #   app:
 #     name: ${spring.application.name}
-
-# # Live Tracking Settings
-# tracking:
-#   update-interval: 30s
-#   geofence-radius: 100m
-#   max-speed: 120km/h
 
 # logging:
 #   level:

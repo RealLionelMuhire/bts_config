@@ -5,9 +5,9 @@ spring:
   application:
     name: bus-ticketing-payment-service
   datasource:
-    url: ${PAYMENT_POSTGRES_URL}
-    username: ${PAYMENT_POSTGRES_USER}
-    password: ${PAYMENT_POSTGRES_PASSWORD}
+    url: postgresql://postgres:gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB@switchback.proxy.rlwy.net:37854/railway
+    username: postgres
+    password: gWdPhKsfjxwNiiOxkFwPhTfWbtUKlMhB
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -24,7 +24,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${app.config.keycloak.server-url}/realms/${app.config.keycloak.realm}/protocol/openid-connect/certs
+          jwk-set-uri: http://localhost:8080/realms/bus-ticketing/protocol/openid-connect/certs
   cloud:
     config:
       enabled: false
@@ -95,15 +95,15 @@ resilience4j:
 app:
   config:
     keycloak:
-      server-url: ${KEYCLOAK_SERVER_URL}
-      realm: ${KEYCLOAK_REALM}
-      clientId: ${KEYCLOAK_CLIENT_ID}
-      client-secret: ${KEYCLOAK_CLIENT_SECRET}
+      server-url: http://localhost:8080
+      realm: bus-ticketing
+      clientId: bus-ticketing-client
+      client-secret: chms6p6XoccAEzzsOVpob3Rsnsr1Dzv6
 
 # App info
 info:
   app:
-    name: ${spring.application.name}
+    name: bus-ticketing-payment-service
     description: Payment Service for Bus Ticketing System
     version: 1.0.0
 
